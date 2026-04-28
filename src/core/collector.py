@@ -4,6 +4,7 @@ import base64
 from typing import List
 
 SOURCE_URLS = [
+     "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/vless_configs.txt",
 "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/refs/heads/master/sub/sub_merge.txt", 
     "https://raw.githubusercontent.com/VP01596/vless-top15/refs/heads/main/All.txt",
     "https://raw.githubusercontent.com/T3stAcc/V2Ray/refs/heads/main/All_Configs_Sub.txt",

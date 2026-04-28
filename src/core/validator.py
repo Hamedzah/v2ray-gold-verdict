@@ -9,8 +9,8 @@ class ConfigValidator:
     def __init__(self):
         self.TCP_TIMEOUT = 8.0
         self.STABILITY_SAMPLES = 2
-        self.MAX_JITTER = 500.0
-        self.MAX_LATENCY = 3000.0
+        self.MAX_JITTER = 1000.0
+        self.MAX_LATENCY = 5000.0
         self.CONCURRENCY_LIMIT = 100
 
     async def run_pipeline(self, configs: List[str]) -> List[Tuple[str, float, float]]:

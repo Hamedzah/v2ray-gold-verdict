@@ -7,11 +7,11 @@ from urllib.parse import urlparse
 
 class ConfigValidator:
     def __init__(self):
-        self.TCP_TIMEOUT = 2.0
-        self.STABILITY_SAMPLES = 3
+        self.TCP_TIMEOUT = 1.5
+        self.STABILITY_SAMPLES = 2
         self.MAX_JITTER = 50.0
         self.MAX_LATENCY = 300.0
-        self.CONCURRENCY_LIMIT = 50
+        self.CONCURRENCY_LIMIT = 100
 
     async def run_pipeline(self, configs: List[str]) -> List[Tuple[str, float, float]]:
         semaphore = asyncio.Semaphore(self.CONCURRENCY_LIMIT)

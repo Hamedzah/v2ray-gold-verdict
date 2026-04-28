@@ -44,6 +44,8 @@ SOURCE_URLS = [
  "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/refs/heads/main/githubmirror/22.txt",
  "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/refs/heads/main/githubmirror/23.txt",
  "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/refs/heads/main/githubmirror/24.txt",
+ "https://raw.githubusercontent.com/r2d4m0/vless-parser/refs/heads/main/githubmirror/whitelist-vless.txt",
+ "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/vless_configs.txt",
 
 ]
 

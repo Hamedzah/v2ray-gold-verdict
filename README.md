@@ -5,7 +5,7 @@ Runs hourly on GitHub Actions. Outputs only the most stable and low-latency prox
 
 ## Subscription URL
 
-`https://raw.githubusercontent.com/Hamedzah/v2ray-gold-verdict/main/configs.txt`
+`https://raw.githubusercontent.com/Hamedzah/v2ray-gold-verdict/config/configs.txt`
 
 ## Parameters
 

@@ -7,17 +7,26 @@ from urllib.parse import urlparse
 
 class ConfigValidator:
     def __init__(self):
-        self.TCP_TIMEOUT = 1.5
+        self.TCP_TIMEOUT = 3.0
         self.STABILITY_SAMPLES = 2
-        self.MAX_JITTER = 50.0
-        self.MAX_LATENCY = 300.0
+        self.MAX_JITTER = 120.0
+        self.MAX_LATENCY = 800.0
         self.CONCURRENCY_LIMIT = 100
 
     async def run_pipeline(self, configs: List[str]) -> List[Tuple[str, float, float]]:
         semaphore = asyncio.Semaphore(self.CONCURRENCY_LIMIT)
         tasks = [self._validate_single(cfg, semaphore) for cfg in configs]
         results = await asyncio.gather(*tasks)
-        return [r for r in results if r is not None]
+        valid = [r for r in results if r is not None]
+        if not valid:
+            print("No config passed strict criteria. Trying rescue mode with softer limits...")
+            self.MAX_LATENCY = 1500.0
+            self.MAX_JITTER = 300.0
+            self.TCP_TIMEOUT = 5.0
+            tasks = [self._validate_single(cfg, semaphore) for cfg in configs[:500]]
+            results = await asyncio.gather(*tasks)
+            valid = [r for r in results if r is not None]
+        return valid
 
     async def _validate_single(self, cfg: str, semaphore: asyncio.Semaphore) -> Optional[Tuple[str, float, float]]:
         async with semaphore:
@@ -31,17 +40,19 @@ class ConfigValidator:
             avg_lat, jitter = await self._stability_test(host, port)
             if avg_lat > self.MAX_LATENCY or jitter > self.MAX_JITTER:
                 return None
-            if not await self._real_load_test(cfg):
-                return None
             score = 1000.0 / (avg_lat + 1.0)
             return (cfg, avg_lat, score)
 
     def _parse_config(self, cfg: str) -> Optional[Tuple[str, int]]:
         try:
             parsed = urlparse(cfg)
-            if parsed.scheme not in ('vless', 'trojan', 'ss'):
+            if parsed.scheme not in ('vless', 'trojan', 'ss', 'v2ray', 'vmess'):
                 return None
-            return (parsed.hostname, parsed.port)
+            host = parsed.hostname
+            port = parsed.port
+            if not host or not port:
+                return None
+            return (host, port)
         except:
             return None
 
@@ -61,12 +72,11 @@ class ConfigValidator:
             success, lat = await self._tcp_ping(host, port)
             if success:
                 latencies.append(lat)
-            await asyncio.sleep(0.5)
-        if len(latencies) < 2:
+            await asyncio.sleep(0.3)
+        if len(latencies) == 0:
             return float('inf'), float('inf')
+        if len(latencies) == 1:
+            return latencies[0], 0.0
         avg = statistics.mean(latencies)
         jitter = statistics.stdev(latencies)
         return avg, jitter
-
-    async def _real_load_test(self, cfg: str) -> bool:
-        return True
